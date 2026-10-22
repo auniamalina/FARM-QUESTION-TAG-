@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Missing Animal: Question Tag Quiz</title>
+    <!-- Tailwind CSS for modern responsive utilities -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons for farm & navigation symbols -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Comic Neue for friendly classroom typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Fredoka', 'Comic Neue', sans-serif;
+            background-color: #87CEEB; /* Sky blue */
+        }
+
+        /* Scenery & Barn Styling */
+        .farm-bg {
+            background: linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 50%, #90EE90 50%, #3CB371 100%);
+            min-height: 100vh;
+        }
+
+        .barn-roof {
+            width: 0;
+            height: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-bottom: 70px solid #991B1B;
+        }
+
+        @media (min-width: 640px) {
+            .barn-roof {
+                border-left: 220px solid transparent;
+                border-right: 220px solid transparent;
+                border-bottom: 110px solid #991B1B;
+            }
+        }
+
+        /* Fun Bounce Animation */
+        @keyframes floatBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .animate-bounce-gentle {
+            animation: floatBounce 3s ease-in-out infinite;
+        }
+
+        /* Custom Button Tactile Effects */
+        .btn-3d {
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0px 6px 0px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-3d-yellow {
+            background-color: #FBBF24;
+            color: #78350F;
+            border: 3px solid #D97706;
+        }
+        .btn-3d-yellow:hover { background-color: #FCD34D; }
+
+        .btn-3d-green {
+            background-color: #10B981;
+            color: #FFFFFF;
+            border: 3px solid #047857;
+        }
+        .btn-3d-green:hover { background-color: #34D399; }
+
+        .btn-3d-blue {
+            background-color: #3B82F6;
+            color: #FFFFFF;
+            border: 3px solid #1D4ED8;
+        }
+        .btn-3d-blue:hover { background-color: #60A5FA; }
+
+        /* Option Cards Styling */
+        .option-btn {
+            background-color: #FFFFFF;
+            border: 4px solid #E5E7EB;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: #F59E0B;
+            background-color: #FEF3C7;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            border-color: #3B82F6;
+            background-color: #EFF6FF;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+        }
+
+        .option-btn.correct-answer {
+            border-color: #10B981 !important;
+            background-color: #D1FAE5 !important;
+            color: #065F46 !important;
+        }
+
+        .option-btn.wrong-answer {
+            border-color: #EF4444 !important;
+            background-color: #FEE2E2 !important;
+            color: #991B1B !important;
+        }
+    </style>
+</head>
+<body class="farm-bg text-gray-800 flex flex-col justify-between min-h-screen select-none overflow-x-hidden">
+
+    <!-- Top Classroom Header -->
+    <header class="bg-amber-800 text-white py-3 px-4 shadow-lg border-b-4 border-amber-900 flex justify-between items-center z-10">
+        <div class="flex items-center space-x-3">
+            <span class="text-3xl">🌾</span>
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold tracking-wide text-amber-200">Year 6 English Grammar</h1>
+        </div>
+        <div class="bg-amber-900 px-4 py-1.5 rounded-full border-2 border-amber-600 font-bold text-amber-100 text-sm sm:text-base flex items-center gap-2">
+            <i class="fa-solid font-bold fa-clock text-amber-300"></i>
+            <span>5-Min Quick Quiz</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container mx-auto px-4 py-4 sm:py-6 flex-grow flex flex-col justify-center items-center max-w-4xl">
+
+        <!-- ================= START SCREEN ================= -->
+        <div id="start-screen" class="w-full text-center my-auto flex flex-col items-center">
+            
+            <!-- Red Barn & Animals Header -->
+            <div class="relative flex flex-col items-center mb-6 w-full max-w-md">
+                <!-- Roof -->
+                <div class="barn-roof"></div>
+                <!-- Barn Body -->
+                <div class="bg-red-700 w-64 sm:w-96 h-36 sm:h-48 border-4 border-red-900 rounded-b-xl flex flex-col justify-between items-center relative overflow-hidden shadow-2xl">
+                    <!-- Barn Doors -->
+                    <div class="w-full h-full flex justify-center items-end">
+                        <div class="bg-amber-900 w-28 sm:w-40 h-28 sm:h-36 border-t-4 border-x-4 border-amber-950 flex justify-between p-1">
+                            <div class="bg-amber-800 w-1/2 h-full border-r border-amber-950 flex items-center justify-center">
+                                <div class="w-full h-0.5 bg-amber-950"></div>
+                            </div>
+                            <div class="bg-amber-800 w-1/2 h-full border-l border-amber-950 flex items-center justify-center">
+                                <div class="w-full h-0.5 bg-amber-950"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Peeking Farm Animals -->
+                <div class="absolute -bottom-4 flex justify-between w-full px-2 sm:px-8 text-4xl sm:text-6xl animate-bounce-gentle">
+                    <span title="Cow">🐮</span>
+                    <span title="Duck">🦆</span>
+                    <span title="Goat">🐐</span>
+                    <span title="Farmer">👨‍🌾</span>
+                </div>
+            </div>
+
+            <!-- Quiz Title Card -->
+            <div class="bg-white/95 backdrop-blur rounded-3xl p-6 sm:p-8 border-4 border-amber-500 shadow-xl max-w-2xl w-full text-center mt-2">
+                <h2 class="text-3xl sm:text-5xl font-black text-amber-900 mb-2 tracking-tight">
+                    The Missing Animal 🔍
+                </h2>
+                <p class="text-xl sm:text-2xl font-bold text-amber-700 mb-4">
+                    Question Tag Quiz
+                </p>
+                <p class="text-base sm:text-lg text-gray-700 mb-6 max-w-lg mx-auto font-medium leading-relaxed">
+                    Help the farmer complete the question tags correctly! Listen carefully when your teacher picks your egg from the nest.
+                </p>
+
+                <button id="start-btn" onclick="startQuiz()" class="btn-3d btn-3d-yellow text-2xl sm:text-3xl px-10 py-4 rounded-2xl font-black uppercase tracking-wider cursor-pointer inline-flex items-center gap-3">
+                    <i class="fa-solid fa-play text-amber-800"></i> Start Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= QUESTION SCREEN ================= -->
+        <div id="quiz-screen" class="hidden w-full max-w-3xl flex flex-col my-auto">
+            
+            <!-- Top Status Bar: Progress & Live Score -->
+            <div class="flex justify-between items-center mb-3 sm:mb-4 bg-white/90 rounded-2xl p-3 sm:p-4 border-2 border-emerald-500 shadow-md">
+                <!-- Question Counter -->
+                <div class="flex items-center gap-2">
+                    <span class="text-xl sm:text-2xl">📝</span>
+                    <span class="text-base sm:text-xl font-bold text-emerald-900">
+                        Question <span id="current-question-num" class="text-2xl sm:text-3xl text-emerald-600 font-extrabold">1</span> / 5
+                    </span>
+                </div>
+
+                <!-- Score Counter -->
+                <div class="flex items-center gap-2 bg-amber-100 border border-amber-300 px-4 py-1.5 rounded-xl">
+                    <span class="text-xl sm:text-2xl">⭐</span>
+                    <span class="text-base sm:text-xl font-bold text-amber-900">
+                        Score: <span id="current-score" class="text-2xl sm:text-3xl text-amber-600 font-extrabold">0</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Visual Progress Bar -->
+            <div class="w-full bg-gray-200 h-4 rounded-full overflow-hidden mb-4 border-2 border-white shadow-inner">
+                <div id="progress-bar" class="bg-emerald-500 h-full transition-all duration-300 rounded-full" style="width: 20%;"></div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border-4 border-amber-400 shadow-xl mb-4 relative overflow-hidden">
+                <!-- Animal Icon Header -->
+                <div class="flex items-center justify-center gap-3 mb-4">
+                    <span id="question-animal-icon" class="text-4xl sm:text-5xl animate-bounce-gentle">🐮</span>
+                    <span class="text-xs sm:text-sm bg-amber-100 text-amber-800 px-3 py-1 rounded-full font-bold uppercase tracking-wider border border-amber-300">
+                        Choose the correct tag
+                    </span>
+                </div>
+
+                <!-- Question Text -->
+                <h3 id="question-text" class="text-2xl sm:text-4xl font-extrabold text-center text-gray-800 leading-snug tracking-wide py-2">
+                    The cow is friendly, ______?
+                </h3>
+            </div>
+
+            <!-- Options Grid (2x2) -->
+            <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
+                <!-- Dynamic Button Injections -->
+            </div>
+
+            <!-- Feedback Message Banner -->
+            <div id="feedback-banner" class="hidden rounded-2xl p-4 text-center font-bold text-xl sm:text-2xl shadow-md transition-all duration-300 mb-4 flex items-center justify-center gap-3">
+                <span id="feedback-icon" class="text-3xl"></span>
+                <span id="feedback-text"></span>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex justify-end gap-4">
+                <button id="check-btn" onclick="checkAnswer()" disabled class="btn-3d btn-3d-green text-xl sm:text-2xl px-8 py-3 rounded-2xl font-bold opacity-50 cursor-not-allowed transition-all">
+                    Check Answer <i class="fa-solid fa-circle-check ml-1"></i>
+                </button>
+                <button id="next-btn" onclick="nextQuestion()" class="hidden btn-3d btn-3d-blue text-xl sm:text-2xl px-8 py-3 rounded-2xl font-bold">
+                    Next Question <i class="fa-solid fa-circle-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= FINAL SCORE SCREEN ================= -->
+        <div id="result-screen" class="hidden w-full max-w-xl text-center my-auto">
+            <div class="bg-white/95 backdrop-blur rounded-3xl p-6 sm:p-10 border-4 border-amber-500 shadow-2xl relative">
+                <!-- Celebration Icon -->
+                <div class="text-6xl sm:text-7xl mb-2 animate-bounce-gentle">
+                    <span id="result-emoji">🎉</span>
+                </div>
+
+                <h2 class="text-3xl sm:text-4xl font-black text-amber-900 mb-2">Quiz Completed!</h2>
+                <p class="text-lg text-gray-600 font-bold mb-6">Great job participating today!</p>
+
+                <!-- Final Score Card -->
+                <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 mb-6">
+                    <p class="text-lg font-bold text-amber-800 uppercase tracking-wide">Your Total Score</p>
+                    <div class="text-5xl sm:text-7xl font-black text-amber-600 my-2">
+                        <span id="final-score">0</span> <span class="text-3xl sm:text-4xl text-amber-800 font-bold">/ 5</span>
+                    </div>
+                    <p id="final-message" class="text-xl sm:text-2xl font-bold text-emerald-700 mt-3">
+                        Excellent work!
+                    </p>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button onclick="restartQuiz()" class="btn-3d btn-3d-yellow text-xl sm:text-2xl px-8 py-4 rounded-2xl font-black uppercase tracking-wider cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Restart Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-2 text-center text-xs sm:text-sm font-bold text-emerald-950 bg-white/40 backdrop-blur border-t border-emerald-400">
+        Primary School English • Year 6 Question Tag Activity
+    </footer>
+
+    <!-- JavaScript Quiz Logic -->
+    <script>
+        // Quiz Questions Data strictly following user parameters
+        const questionsData = [
+            {
+                question: "The cow is friendly, ______?",
+                animalIcon: "🐮",
+                options: [
+                    { label: "A", text: "is it?" },
+                    { label: "B", text: "isn't it?" },
+                    { label: "C", text: "doesn't it?" },
+                    { label: "D", text: "aren't they?" }
+                ],
+                correctIndex: 1 // B
+            },
+            {
+                question: "The ducks are in the pond, ______?",
+                animalIcon: "🦆",
+                options: [
+                    { label: "A", text: "are they?" },
+                    { label: "B", text: "don't they?" },
+                    { label: "C", text: "aren't they?" },
+                    { label: "D", text: "isn't it?" }
+                ],
+                correctIndex: 2 // C
+            },
+            {
+                question: "The goat likes grass, ______?",
+                animalIcon: "🐐",
+                options: [
+                    { label: "A", text: "doesn't it?" },
+                    { label: "B", text: "isn't it?" },
+                    { label: "C", text: "don't they?" },
+                    { label: "D", text: "does it?" }
+                ],
+                correctIndex: 0 // A
+            },
+            {
+                question: "The farmer has a big hat, ______?",
+                animalIcon: "👨‍🌾",
+                options: [
+                    { label: "A", text: "hasn't he?" },
+                    { label: "B", text: "doesn't he?" },
+                    { label: "C", text: "isn't he?" },
+                    { label: "D", text: "don't he?" }
+                ],
+                correctIndex: 1 // B (doesn't he?)
+            },
+            {
+                question: "The animals don't have fresh food, ______?",
+                animalIcon: "🌾",
+                options: [
+                    { label: "A", text: "don't they?" },
+                    { label: "B", text: "do they?" },
+                    { label: "C", text: "are they?" },
+                    { label: "D", text: "have they?" }
+                ],
+                correctIndex: 1 // B
+            }
+        ];
+
+        // State Variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOptionIndex = null;
+        let isAnswerChecked = false;
+
+        // Sound Effects Generator using Web Audio API (No external sound files required)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function playSound(type) {
+            try {
+                if (!audioCtx) audioCtx = new AudioContext();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.08);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(250, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(180, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                }
+            } catch (e) {
+                // Silently ignore audio block if restricted
+            }
+        }
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+
+        const currentQuestionNumEl = document.getElementById('current-question-num');
+        const currentScoreEl = document.getElementById('current-score');
+        const progressBarEl = document.getElementById('progress-bar');
+        const questionTextEl = document.getElementById('question-text');
+        const animalIconEl = document.getElementById('question-animal-icon');
+        const optionsContainerEl = document.getElementById('options-container');
+
+        const feedbackBanner = document.getElementById('feedback-banner');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackText = document.getElementById('feedback-text');
+
+        const checkBtn = document.getElementById('check-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Initialize / Start
+        function startQuiz() {
+            playSound('click');
+            currentQuestionIndex = 0;
+            score = 0;
+            currentScoreEl.textContent = score;
+
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        // Render Current Question
+        function loadQuestion() {
+            isAnswerChecked = false;
+            selectedOptionIndex = null;
+
+            const q = questionsData[currentQuestionIndex];
+
+            // Update Header Info
+            currentQuestionNumEl.textContent = currentQuestionIndex + 1;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questionsData.length) * 100}%`;
+            animalIconEl.textContent = q.animalIcon;
+            questionTextEl.textContent = q.question;
+
+            // Reset Feedback & Buttons
+            feedbackBanner.classList.add('hidden');
+            feedbackBanner.className = "hidden rounded-2xl p-4 text-center font-bold text-xl sm:text-2xl shadow-md transition-all duration-300 mb-4 flex items-center justify-center gap-3";
+            
+            checkBtn.classList.remove('hidden');
+            checkBtn.disabled = true;
+            checkBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            nextBtn.classList.add('hidden');
+
+            // Render Options
+            optionsContainerEl.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const button = document.createElement('button');
+                button.className = `option-btn w-full text-left p-4 sm:p-5 rounded-2xl flex items-center justify-between text-lg sm:text-2xl font-bold text-gray-800`;
+                button.onclick = () => selectOption(index);
+                
+                button.innerHTML = `
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <span class="bg-amber-100 border-2 border-amber-400 text-amber-900 w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-extrabold text-base sm:text-xl">
+                            ${opt.label}
+                        </span>
+                        <span>${opt.text}</span>
+                    </div>
+                    <i class="fa-regular fa-circle text-gray-300 text-2xl status-icon"></i>
+                `;
+                optionsContainerEl.appendChild(button);
+            });
+        }
+
+        // Select Option Logic
+        function selectOption(index) {
+            if (isAnswerChecked) return;
+
+            playSound('click');
+            selectedOptionIndex = index;
+
+            // Highlight chosen button, unhighlight others
+            const optionBtns = optionsContainerEl.querySelectorAll('.option-btn');
+            optionBtns.forEach((btn, i) => {
+                const icon = btn.querySelector('.status-icon');
+                if (i === index) {
+                    btn.classList.add('selected');
+                    icon.className = "fa-solid fa-circle-check text-blue-500 text-2xl status-icon";
+                } else {
+                    btn.classList.remove('selected');
+                    icon.className = "fa-regular fa-circle text-gray-300 text-2xl status-icon";
+                }
+            });
+
+            // Enable Check Answer Button
+            checkBtn.disabled = false;
+            checkBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Check Selected Answer
+        function checkAnswer() {
+            if (selectedOptionIndex === null || isAnswerChecked) return;
+
+            isAnswerChecked = true;
+            const q = questionsData[currentQuestionIndex];
+            const optionBtns = optionsContainerEl.querySelectorAll('.option-btn');
+
+            // Disable further selection
+            optionBtns.forEach(btn => btn.disabled = true);
+
+            const isCorrect = (selectedOptionIndex === q.correctIndex);
+
+            if (isCorrect) {
+                playSound('correct');
+                score++;
+                currentScoreEl.textContent = score;
+
+                // Style chosen option as correct
+                optionBtns[selectedOptionIndex].classList.remove('selected');
+                optionBtns[selectedOptionIndex].classList.add('correct-answer');
+                optionBtns[selectedOptionIndex].querySelector('.status-icon').className = "fa-solid fa-circle-check text-emerald-600 text-2xl status-icon";
+
+                // Show Feedback Banner
+                feedbackBanner.className = "rounded-2xl p-4 text-center font-bold text-xl sm:text-2xl shadow-md mb-4 flex items-center justify-center gap-3 bg-emerald-100 border-2 border-emerald-500 text-emerald-900";
+                feedbackIcon.textContent = "🎉";
+                feedbackText.textContent = "Correct! Well done!";
+            } else {
+                playSound('wrong');
+                // Style chosen option as wrong
+                optionBtns[selectedOptionIndex].classList.remove('selected');
+                optionBtns[selectedOptionIndex].classList.add('wrong-answer');
+                optionBtns[selectedOptionIndex].querySelector('.status-icon').className = "fa-solid fa-circle-xmark text-red-600 text-2xl status-icon";
+
+                // Style correct option to show teacher/pupils
+                optionBtns[q.correctIndex].classList.add('correct-answer');
+                optionBtns[q.correctIndex].querySelector('.status-icon').className = "fa-solid fa-circle-check text-emerald-600 text-2xl status-icon";
+
+                // Show Feedback Banner
+                feedbackBanner.className = "rounded-2xl p-4 text-center font-bold text-xl sm:text-2xl shadow-md mb-4 flex items-center justify-center gap-3 bg-red-100 border-2 border-red-500 text-red-900";
+                feedbackIcon.textContent = "❌";
+                feedbackText.textContent = `Not quite! The correct answer is ${q.options[q.correctIndex].label}.`;
+            }
+
+            feedbackBanner.classList.remove('hidden');
+
+            // Swap Check button for Next button
+            checkBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+        }
+
+        // Advance to Next Question or Final Screen
+        function nextQuestion() {
+            playSound('click');
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questionsData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Render Final Results
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = score;
+
+            const finalMsgEl = document.getElementById('final-message');
+            const resultEmojiEl = document.getElementById('result-emoji');
+
+            if (score === 5) {
+                resultEmojiEl.textContent = "🏆";
+                finalMsgEl.textContent = "Perfect Score! You are a Question Tag Master!";
+                finalMsgEl.className = "text-xl sm:text-2xl font-bold text-emerald-600 my-2";
+            } else if (score >= 3) {
+                resultEmojiEl.textContent = "🌟";
+                finalMsgEl.textContent = "Great job! You know your question tags well!";
+                finalMsgEl.className = "text-xl sm:text-2xl font-bold text-amber-600 my-2";
+            } else {
+                resultEmojiEl.textContent = "👍";
+                finalMsgEl.textContent = "Good try! Keep practicing your question tags!";
+                finalMsgEl.className = "text-xl sm:text-2xl font-bold text-blue-600 my-2";
+            }
+        }
+
+        // Restart Quiz
+        function restartQuiz() {
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
